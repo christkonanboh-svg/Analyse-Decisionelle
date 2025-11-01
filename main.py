@@ -1,43 +1,46 @@
-# src/main.py
+# main.py
 from controller.main_controller import Controller
-from view.display import *
+from view.display import header, menu, algo_menu, comparison
 
-def main():
-    print_header()
-    ctrl = Controller()
+ctrl = Controller()
 
-    # Chargement automatique des datasets
-    ctrl.load_dataset("Petit", "../data/data_small.csv")
-    ctrl.load_dataset("Dataset1", "../data/data1.csv")
-    ctrl.load_dataset("Dataset2", "../data/data2.csv")
+# Chargement automatique
+ctrl.load("Petit", "data_small.csv")
+ctrl.load("Dataset1", "data1.csv")
+ctrl.load("Dataset2", "data2.csv")
 
-    while True:
-        print_menu()
-        choice = input("\nChoisir une option (1-4) : ").strip()
+header()
 
-        if choice == '1':
-            print("Datasets déjà chargés : Petit, Dataset1, Dataset2")
+while True:
+    menu()
+    choice = input("Choisir (1-4) : ").strip()
 
-        elif choice == '2':
-            dataset = input("Dataset (Petit/Dataset1/Dataset2) : ").strip()
-            if dataset not in ctrl.datasets:
-                print("Dataset inconnu.")
-                continue
-            print_algo_menu()
+    if choice == '1':
+        ctrl.load("Petit", "data_small.csv")
+        ctrl.load("Dataset1", "data1.csv")
+        ctrl.load("Dataset2", "data2.csv")
+
+    elif choice == '2':
+        dataset = input("Dataset (Petit/Dataset1/Dataset2) : ").strip()
+        if dataset not in ctrl.datasets:
+            print("Dataset inconnu")
+            continue
+        algo_menu()
+        try:
             algo = int(input("Algorithme (1-3) : ").strip())
-            ctrl.run_algorithm(dataset, algo)
+            ctrl.run(dataset, algo)
+        except:
+            print("Entrez un nombre valide")
 
-        elif choice == '3':
-            if not ctrl.results:
-                print("Aucun résultat à comparer.")
-            else:
-                print_comparison(ctrl.results)
-
-        elif choice == '4':
-            print("Au revoir !")
-            break
+    elif choice == '3':
+        if ctrl.results:
+            comparison(ctrl.results)
         else:
-            print("Option invalide.")
+            print("Aucun résultat disponible")
 
-if __name__ == "__main__":
-    main()
+    elif choice == '4':
+        print("Au revoir !")
+        break
+
+    else:
+        print("Option invalide")
